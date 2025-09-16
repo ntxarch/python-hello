@@ -1,0 +1,39 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:us-west-2:326234203012:generatedTemplate/484be258-1024-452d-97e6-e2fae04e7396"
+Resources:
+  ApiGatewayDeployment:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId:
+        Ref: "ApiGatewayRestApi"
+  ApiGatewayRestApi:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::RestApi"
+    DeletionPolicy: "Retain"
+    Properties:
+      ApiKeySourceType: "HEADER"
+      EndpointConfiguration:
+        IpAddressType: "ipv4"
+        Types:
+        - "REGIONAL"
+      DisableExecuteApiEndpoint: false
+      Name: "my-rest-api"
+  ApiGatewayStageProd:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Stage"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId:
+        Ref: "ApiGatewayRestApi"
+      DeploymentId:
+        Fn::GetAtt:
+        - "ApiGatewayDeployment"
+        - "DeploymentId"
+      StageName: "prod"
+      CacheClusterSize: "0.5"
+      TracingEnabled: false
+      CacheClusterEnabled: false
